@@ -11,8 +11,7 @@ import router from "../routes/authRoutes.js";
 // @access  Private
 export const generateFlashcards = async (req, res, nexr) => {
   try {
-    const { documentId, count = 10 } = req,
-      body;
+    const { documentId, count = 10 } = req.body;
 
     if (!documentId) {
       return res.status(400).json({
