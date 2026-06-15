@@ -10,7 +10,7 @@ import mongoose from "mongoose";
 // @route   POST /api/documents/upload
 // @access  Private
 export const uploadDocument = async (req, res, next) => {
-  const title = req.body;
+  const { title } = req.body;
 
   try {
     if (!req.file) {
@@ -34,9 +34,9 @@ export const uploadDocument = async (req, res, next) => {
 
     // Create a new document in the database
     const document = await Document.create({
-      user: req.user._id,
+      userId: req.user._id,
       title,
-      fileName: req.file.originalName,
+      fileName: req.file.originalname,
       filePath: fileUrl,
       fileSize: req.file.size,
       status: "processing",

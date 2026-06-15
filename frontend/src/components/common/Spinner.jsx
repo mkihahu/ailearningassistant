@@ -13,7 +13,7 @@ const Spinner = () => {
           r="10"
           stroke="currentColor"
           strokeWidth="3"
-          opacity="0.25"
+          opacity="25"
         />
         <path
           className="opacity-75"
