@@ -33,7 +33,7 @@ export const generateFlashcards = async (text, count = 10) => {
 
   try {
     const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash-lite",
+      model: "gemini-3.5-flash",
       contents: prompt,
     });
 
@@ -121,7 +121,7 @@ export const generateQuiz = async (text, numQuestions = 5) => {
         const trimmed = line.trim();
         if (trimmed.startsWith("Q:")) {
           question = trimmed.substring(2).trim();
-        } else if (trimmed.match(/^O\d:/)) {
+        } else if (trimmed.match(/^0\d:/)) {
           options.push(trimmed.substring(3).trim());
         } else if (trimmed.startsWith("C:")) {
           correctAnswer = trimmed.substring(2).trim();

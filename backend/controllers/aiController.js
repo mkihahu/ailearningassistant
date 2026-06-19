@@ -9,7 +9,7 @@ import router from "../routes/authRoutes.js";
 // @desc    Generate flashcards from document
 // @route   POST /api/ai/generate-flashcards
 // @access  Private
-export const generateFlashcards = async (req, res, nexr) => {
+export const generateFlashcards = async (req, res, next) => {
   try {
     const { documentId, count = 10 } = req.body;
 
@@ -199,7 +199,7 @@ export const chat = async (req, res, next) => {
 
     if (!chatHistory) {
       chatHistory = await ChatHistory.create({
-        userId: req.user_id,
+        userId: req.user._id,
         documentId: document._id,
         messages: [],
       });
@@ -297,7 +297,7 @@ export const explainConcept = async (req, res, next) => {
 // @access  Private
 export const getChatHistory = async (req, res, next) => {
   try {
-    const { documentId } = req.body;
+    const { documentId } = req.params;
 
     if (!documentId) {
       return res.status(400).json({

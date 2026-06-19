@@ -8,6 +8,8 @@ import Spinner from "../../components/common/Spinner";
 import Button from "../../components/common/Button";
 import DocumentCard from "../../components/documents/DocumentCard";
 
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB in bytes
+
 const DocumentListPage = () => {
   const [documents, setDocuments] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -17,6 +19,7 @@ const DocumentListPage = () => {
   const [uploadFile, setUploadFile] = useState(null);
   const [uploadTitle, setUploadTitle] = useState("");
   const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState("");
 
   // State for delete confirmation modal
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -42,6 +45,17 @@ const DocumentListPage = () => {
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
+      // Check file size
+      if (file.size > MAX_FILE_SIZE) {
+        setUploadError(
+          `File size must be less than ${MAX_FILE_SIZE / (1024 * 1024)}MB`,
+        );
+        setUploadFile(null);
+        setUploadTitle("");
+        return;
+      }
+
+      setUploadError(""); // Clear any previous error
       setUploadFile(file);
       setUploadTitle(file.name.replace(/\.[^/.]+$/, ""));
     }
@@ -53,6 +67,15 @@ const DocumentListPage = () => {
       toast.error("Please provide a title and select a file");
       return;
     }
+
+    // Double-check file size before upload
+    if (uploadFile.size > MAX_FILE_SIZE) {
+      toast.error(
+        `File size must be less than ${MAX_FILE_SIZE / (1024 * 1024)}MB`,
+      );
+      return;
+    }
+
     setUploading(true);
     const formData = new FormData();
     formData.append("file", uploadFile);
@@ -92,6 +115,13 @@ const DocumentListPage = () => {
     } finally {
       setDeleting(false);
     }
+  };
+
+  const handleCloseModal = () => {
+    setIsUploadModalOpen(false);
+    setUploadFile(null);
+    setUploadTitle("");
+    setUploadError(""); // Clear error
   };
 
   const renderContent = () => {
@@ -177,7 +207,7 @@ const DocumentListPage = () => {
           <div className="relative w-full max-w-lg bg-white/95 backdrop-blur-xl border border-slate-200/60 rounded-2xl shadow-2xl shadow-slate-900/20 p-8">
             {/* close Button */}
             <button
-              onClick={() => setIsUploadModalOpen(false)}
+              onClick={handleCloseModal}
               className="absolute top-6 right-6 w-8 h-8 flex items-center rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-all duration-200"
             >
               <X className="w-5 h5" strokeWidth={2} />
@@ -246,13 +276,20 @@ const DocumentListPage = () => {
                     <p className="text-xs text-slate-500">PDF upto 10MB</p>
                   </div>
                 </div>
+
+                {/* Error Message */}
+                {uploadError && (
+                  <p className="text-sm text-red-600 font-medium mt-2">
+                    {uploadError}
+                  </p>
+                )}
               </div>
 
               {/* Action Buttons */}
               <div className="flex gap-3 pt-2">
                 <button
                   type="button"
-                  onClick={() => setIsUploadModalOpen(false)}
+                  onClick={handleCloseModal}
                   disabled={uploading}
                   className="flex-1 h-11 px-4 border-2 border-slate-200 rounded-xl bg-white text-slate-700 text-sm font-semibold hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
