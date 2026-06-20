@@ -1,8 +1,22 @@
 import { useAuth } from "../../context/AuthContext";
 import { Bell, User, Menu } from "lucide-react";
+import { BASE_URL } from "../../utils/apiPaths";
 
 const Header = ({ toggleSidebar }) => {
   const { user } = useAuth();
+
+  const getProfileImageUrl = () => {
+    if (!user?.profileImage || user.profileImage === "") {
+      return null;
+    }
+    if (user.profileImage.startsWith("http")) {
+      return user.profileImage;
+    }
+    return `${BASE_URL}${user.profileImage}`;
+  };
+
+  const profileImageUrl = getProfileImageUrl();
+
   return (
     <header className="sticky top-0 z-40 w-full h-16 bg-white/80 backdrop-blur-xl border-b border-slate-200/60">
       <div className="flex items-center justify-between h-full px-6">
@@ -31,8 +45,16 @@ const Header = ({ toggleSidebar }) => {
           {/* User Profile */}
           <div className="flex items-center gap-3 pl-3 border-l border-slate-200/60">
             <div className="flex items-center gap-3 px-3 py-1.5 rounded-xl hover:bg-slate-50 transition-colors duration-200 cursor-pointer group">
-              <div className="w-9 h-9 rounded-xl bg-linear-to-br from-emerald-400 to-teal-500 flex items-center justify-center text-white shadow-md shadow-emerald-500/20 group-hover:shadow-lg group-hover:shadow-emerald-500/30 transition-all duration-200">
-                <User size={18} strokeWidth={2.5} />
+              <div className="w-9 h-9 rounded-xl bg-linear-to-br from-emerald-400 to-teal-500 flex items-center justify-center text-white shadow-md shadow-emerald-500/20 group-hover:shadow-lg group-hover:shadow-emerald-500/30 transition-all duration-200 overflow-hidden">
+                {profileImageUrl ? (
+                  <img
+                    src={profileImageUrl}
+                    alt={user?.username || "User"}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <User size={18} strokeWidth={2.5} />
+                )}
               </div>
               <div>
                 <p className="text-sm font-semibold text-slate-900">

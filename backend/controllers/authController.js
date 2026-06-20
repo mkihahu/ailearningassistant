@@ -122,14 +122,16 @@ export const getProfile = async (req, res, next) => {
 // @route   PUT /api/auth/profile
 // @access  Private
 export const updateProfile = async (req, res, next) => {
-  const { username, email, profileImage } = req.body;
+  const { username, email } = req.body;
 
   try {
     const user = await User.findById(req.user.id);
 
     if (username) user.username = username;
     if (email) user.email = email;
-    if (profileImage) user.profileImage = profileImage;
+    if (req.file) {
+      user.profileImage = `/uploads/profiles/${req.file.filename}`;
+    }
     await user.save();
 
     res.json({

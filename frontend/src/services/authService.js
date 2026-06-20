@@ -37,9 +37,15 @@ const getProfile = async () => {
 
 const updateProfile = async (userData) => {
   try {
+    const isFormData = userData instanceof FormData;
     const response = await axiosInstance.put(
       API_PATHS.AUTH.UPDATE_PROFILE,
       userData,
+      {
+        headers: isFormData
+          ? { "Content-Type": "multipart/form-data" }
+          : undefined,
+      },
     );
     return response.data;
   } catch (error) {
@@ -49,7 +55,7 @@ const updateProfile = async (userData) => {
 
 const changePassword = async (passwords) => {
   try {
-    const response = await axiosInstance.post(
+    const response = await axiosInstance.put(
       API_PATHS.AUTH.CHANGE_PASSWORD,
       passwords,
     );
